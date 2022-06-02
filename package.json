@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "description": "A Helper Package to Deluge for encryption, decryption and utilities.",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Near-Deluge/deluge-helper.git"
+  },
+  "homepage": "https://github.com/Near-Deluge/deluge-helper.git",
   "scripts": {
     "build": "./build.js",
     "watch": "./build.js --watch",

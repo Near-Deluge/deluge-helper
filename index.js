@@ -6,11 +6,7 @@ const {
   randomBytes,
   createDecipheriv,
 } = require("crypto");
-const {
-  isHex,
-  hexToUint8Array,
-  concatUint8Arrays,
-} = require("./util");
+const { isHex, hexToUint8Array, concatUint8Arrays } = require("./util");
 const curve25519 = require("curve25519-js");
 const ed2curve = require("ed2curve");
 
@@ -88,11 +84,14 @@ const encrypt_key = (walletEncKey, publicKey) => {
     throw "Wallet encryption key must be Uint8Array ";
   }
 
-  if ((typeof publicKey !== "string" || !isHex(publicKey)) && !(publicKey instanceof Uint8Array)) {
+  if (
+    (typeof publicKey !== "string" || !isHex(publicKey)) &&
+    !(publicKey instanceof Uint8Array)
+  ) {
     throw "Public Key must be a hex String or Uint8Array";
   }
 
-  if(typeof publicKey === "string") {
+  if (typeof publicKey === "string") {
     publicKey = hexToUint8Array(publicKey);
   }
 
@@ -184,7 +183,6 @@ const ecEncrypt = (data, publicKey) => {
   };
 };
 
-
 /**
  * Decrypts Encrypted data from Encrypted Data Encryption Key
  * @param {string | Uint8Array} encryptedData Data which needs to be decrypted
@@ -266,6 +264,26 @@ const ecDecrypt = (
   return decrypted_data;
 };
 
+/**
+ * Generates a new ed25519 Keypair
+ * @param {string} seed Seed which will be used to generate Keypair
+ */
+const genKeyPair = (seed) => {
+  if (typeof seed !== "string") {
+    throw "Seed must be a string";
+  }
 
+  // Convert it to sha256 hash as ed25519 expects a 32byte length
+  const seedHash = createHash("sha256").update(seed).digest();
+
+  const { public, private } = curve25519.generateKeyPair(seedHash);
+
+  return {
+    pubKey: public,
+    privKey: private,
+  };
+};
+
+module.exports.genKeyPair = genKeyPair;
 module.exports.ecDecrypt = ecDecrypt;
 module.exports.ecEncrypt = ecEncrypt;
