@@ -1,5 +1,6 @@
-const { ecEncrypt, ecDecrypt, genKeyPair } = require("../index");
+const { ecEncrypt, ecDecrypt, genKeyPair, generateRandomKeypair } = require("../index");
 const assert = require("assert");
+const bs58 = require("bs58");
 
 describe("index.js", () => {
   it("should encrypt and decrypt", () => {
@@ -47,4 +48,36 @@ describe("index.js", () => {
     assert.deepStrictEqual(privKeyHex, privKeyP, "Private Key does not match!!");
     assert.deepStrictEqual(pubKeyHex, pubKeyP, "Public Key does not match!!");
   });
+
+  it("should encrypt and decrypt with generateRandomKeypairs's keys", () => {
+
+    const { publicKey, secretKey} = generateRandomKeypair();
+
+    const randomData = JSON.stringify({
+      data: "This is a testing value.",
+    });
+
+    const pubKey = bs58.decode(publicKey.split("ed25519:")[1]);
+    const privKey = bs58.decode(secretKey.split("ed25519:")[1]);
+
+    const pubObj = ecEncrypt(randomData, pubKey);
+
+    const decData = ecDecrypt(
+      pubObj.encryptedData,
+      pubObj.encryptedKey,
+      pubObj.ephPubKey,
+      pubObj.authTag,
+      privKey
+    );
+
+    const descryptedStr = decData.decrypted.toString();
+
+    assert.deepStrictEqual(
+      descryptedStr,
+      randomData,
+      "Data and Decrypted Data doesn't matched!!"
+    );
+
+  })
+
 });

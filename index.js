@@ -9,6 +9,7 @@ const {
 const { isHex, hexToUint8Array, concatUint8Arrays } = require("./util");
 const curve25519 = require("curve25519-js");
 const ed2curve = require("ed2curve");
+const { generateSeedPhrase } = require("near-seed-phrase");
 
 const deriveSecret = (sharedKey) => {
   if (typeof sharedKey !== "string" && !(sharedKey instanceof Uint8Array)) {
@@ -284,6 +285,14 @@ const genKeyPair = (seed) => {
   };
 };
 
+/**
+ * Generates a new Keypair with seed phrases used to Generate the keypair
+ */
+const generateRandomKeypair = () => {
+  return generateSeedPhrase()
+}
+
+module.exports.generateRandomKeypair = generateRandomKeypair;
 module.exports.genKeyPair = genKeyPair;
 module.exports.ecDecrypt = ecDecrypt;
 module.exports.ecEncrypt = ecEncrypt;
